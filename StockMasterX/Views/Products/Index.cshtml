@@ -1,0 +1,85 @@
+﻿@model IEnumerable<StockMasterX.Models.Product>
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h1>📦 Gestión de Productos</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="Create" class="btn btn-primary btn-lg">
+            ➕ Nuevo Producto
+        </a>
+    </div>
+</div>
+
+<!-- Tabla de productos -->
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>SKU</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Proveedor</th>
+                        <th class="text-end">Precio Compra</th>
+                        <th class="text-end">Precio Venta</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.SKU</strong></td>
+                            <td>@item.Name</td>
+                            <td><span class="badge bg-secondary">@item.Category.Name</span></td>
+                            <td>@item.Supplier.Name</td>
+                            <td class="text-end">₡@item.PurchasePrice.ToString("N0")</td>
+                            <td class="text-end">₡@item.SalePrice.ToString("N0")</td>
+                            <td class="text-center">
+                                @if (item.CurrentStock <= item.MinimumStock)
+                                {
+                                    <span class="badge bg-danger fs-6">⚠️ @item.CurrentStock</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success fs-6">✅ @item.CurrentStock</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactivo</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Ver detalles">
+                                        👁️
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Editar">
+                                        ✏️
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Eliminar">
+                                        🗑️
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

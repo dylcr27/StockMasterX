@@ -1,0 +1,96 @@
+﻿@model IEnumerable<StockMasterX.Models.InventoryMovement>
+
+@{
+    ViewData["Title"] = "Movimientos de Inventario";
+}
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h1>📊 Movimientos de Inventario</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="Create" class="btn btn-primary btn-lg">
+            ➕ Registrar Movimiento
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th class="text-center">Tipo</th>
+                        <th class="text-center">Cantidad</th>
+                        <th>Razón</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderByDescending(m => m.MovementDate))
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.MovementDate.ToString("dd/MM/yyyy")</strong>
+                                <br />
+                                <small class="text-muted">@item.MovementDate.ToString("HH:mm")</small>
+                            </td>
+                            <td>
+                                <strong>@item.Product.Name</strong>
+                                <br />
+                                <small class="text-muted">SKU: @item.Product.SKU</small>
+                            </td>
+                            <td class="text-center">
+                                @if (item.Type == StockMasterX.Models.MovementType.Entry)
+                                {
+                                    <span class="badge bg-success fs-6">
+                                        📥 Entrada
+                                    </span>
+                                }
+                                else if (item.Type == StockMasterX.Models.MovementType.Exit)
+                                {
+                                    <span class="badge bg-danger fs-6">
+                                        📤 Salida
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark fs-6">
+                                        🔧 Ajuste
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <h5 class="mb-0">
+                                    @if (item.Type == StockMasterX.Models.MovementType.Entry)
+                                    {
+                                        <span class="text-success">+@item.Quantity</span>
+                                    }
+                                    else if (item.Type == StockMasterX.Models.MovementType.Exit)
+                                    {
+                                        <span class="text-danger">-@item.Quantity</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">@item.Quantity</span>
+                                    }
+                                </h5>
+                            </td>
+                            <td>@item.Reason</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">👁️</a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

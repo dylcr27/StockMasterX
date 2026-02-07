@@ -13,7 +13,7 @@ Sistema web completo para la gestión de inventario desarrollado con ASP.NET Cor
 - **Movimientos de Inventario**: Registro de entradas, salidas y ajustes
 - **Alertas de Stock**: Notificaciones automáticas cuando el stock está bajo el mínimo
 - **Interfaz Responsive**: Diseño adaptable a dispositivos móviles
-- **Exportación de Datos**: Generación de reportes en Excel (próximamente)
+- **Exportación de Datos**: Generación de reportes en Excel 
 
 ## 🛠️ Tecnologías Utilizadas
 

@@ -1,90 +1,205 @@
 ﻿@model StockMasterX.Models.Product
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del Producto";
 }
 
-<h1>Details</h1>
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>📦 Detalles del Producto</h1>
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">✏️ EDITAR</a>
+                    <a asp-action="Index" class="btn btn-secondary">⬅️ VOLVER</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SKU)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SKU)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PurchasePrice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PurchasePrice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SalePrice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SalePrice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CurrentStock)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CurrentStock)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MinimumStock)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MinimumStock)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Supplier)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Supplier.Id)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h3 class="mb-0">@Model.Name</h3>
+                            <p class="mb-0"><small>SKU: @Model.SKU</small></p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success fs-5">✅ Activo</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary fs-5">❌ Inactivo</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col-md-6">
+                            <div class="info-section mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">📝 Información General</h5>
+
+                                <div class="info-item mb-3">
+                                    <label class="text-muted">Descripción</label>
+                                    <p class="fw-bold">@(Model.Description ?? "Sin descripción")</p>
+                                </div>
+
+                                <div class="info-item mb-3">
+                                    <label class="text-muted">Categoría</label>
+                                    <p><span class="badge bg-secondary fs-6">@Model.Category.Name</span></p>
+                                </div>
+
+                                <div class="info-item mb-3">
+                                    <label class="text-muted">Proveedor</label>
+                                    <p><span class="badge bg-info fs-6">@Model.Supplier.Name</span></p>
+                                </div>
+
+                                <div class="info-item mb-3">
+                                    <label class="text-muted">Fecha de Creación</label>
+                                    <p class="fw-bold">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha -->
+                        <div class="col-md-6">
+                            <div class="info-section mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">💰 Precios y Stock</h5>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="price-card bg-light p-3 rounded mb-3">
+                                            <label class="text-muted small">Precio de Compra</label>
+                                            <h4 class="text-success mb-0">₡@Model.PurchasePrice.ToString("N2")</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="price-card bg-light p-3 rounded mb-3">
+                                            <label class="text-muted small">Precio de Venta</label>
+                                            <h4 class="text-primary mb-0">₡@Model.SalePrice.ToString("N2")</h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="stock-card p-3 rounded mb-3 @(Model.CurrentStock <= Model.MinimumStock ? "bg-danger" : "bg-success") text-white">
+                                            <label class="small">Stock Actual</label>
+                                            <h3 class="mb-0">@Model.CurrentStock</h3>
+                                            @if (Model.CurrentStock <= Model.MinimumStock)
+                                            {
+                                                <small>⚠️ Stock bajo</small>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="stock-card bg-light p-3 rounded mb-3">
+                                            <label class="text-muted small">Stock Mínimo</label>
+                                            <h3 class="mb-0">@Model.MinimumStock</h3>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @{
+                                    var profit = Model.SalePrice - Model.PurchasePrice;
+                                    var profitMargin = Model.PurchasePrice > 0 ? ((profit / Model.PurchasePrice) * 100) : 0;
+                                }
+
+                                <div class="alert alert-info mb-0">
+                                    <strong>💵 Margen de Ganancia:</strong><br />
+                                    ₡@profit.ToString("N2") (@profitMargin.ToString("N1")%)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <hr />
+                        <div class="text-center">
+                            <h5 class="mb-3">🖼️ Imagen del Producto</h5>
+                            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded shadow" style="max-height: 300px;" />
+                        </div>
+                    }
+
+                    @if (Model.Movements.Any())
+                    {
+                        <hr />
+                        <h5 class="mb-3">📊 Últimos Movimientos de Inventario</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th class="text-center">Cantidad</th>
+                                        <th>Razón</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var movement in Model.Movements.OrderByDescending(m => m.MovementDate).Take(5))
+                                    {
+                                        <tr>
+                                            <td>@movement.MovementDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                @if (movement.Type == StockMasterX.Models.MovementType.Entry)
+                                                {
+                                                    <span class="badge bg-success">📥 Entrada</span>
+                                                }
+                                                else if (movement.Type == StockMasterX.Models.MovementType.Exit)
+                                                {
+                                                    <span class="badge bg-danger">📤 Salida</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning text-dark">🔧 Ajuste</span>
+                                                }
+                                            </td>
+                                            <td class="text-center"><strong>@movement.Quantity</strong></td>
+                                            <td>@movement.Reason</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (Model.Movements.Count > 5)
+                        {
+                            <p class="text-muted text-center">Mostrando 5 de @Model.Movements.Count movimientos</p>
+                        }
+                    }
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">✏️ EDITAR PRODUCTO</a>
+                        <a asp-action="Index" class="btn btn-secondary">📋 VER TODOS LOS PRODUCTOS</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .info-item label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .price-card, .stock-card {
+        border-left: 4px solid #0d6efd;
+    }
+
+    .card {
+        border: none;
+    }
+</style>

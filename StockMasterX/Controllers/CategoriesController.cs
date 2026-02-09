@@ -22,7 +22,10 @@ namespace StockMasterX.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            // ARREGLADO: Agregado .Include() para cargar productos
+            return View(await _context.Categories
+                .Include(c => c.Products)
+                .ToListAsync());
         }
 
         // GET: Categories/Details/5
@@ -34,6 +37,7 @@ namespace StockMasterX.Controllers
             }
 
             var category = await _context.Categories
+                .Include(c => c.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
@@ -50,8 +54,6 @@ namespace StockMasterX.Controllers
         }
 
         // POST: Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,CreatedAt,IsActive")] Category category)
@@ -82,8 +84,6 @@ namespace StockMasterX.Controllers
         }
 
         // POST: Categories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,CreatedAt,IsActive")] Category category)
@@ -125,6 +125,7 @@ namespace StockMasterX.Controllers
             }
 
             var category = await _context.Categories
+                .Include(c => c.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
@@ -152,6 +153,68 @@ namespace StockMasterX.Controllers
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory([FromBody] Category category)
+        {
+            try
+            {
+                category.CreatedAt = DateTime.Now;
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Categoría creada exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCategory([FromBody] Category category)
+        {
+            try
+            {
+                var existingCategory = await _context.Categories.FindAsync(category.Id);
+                if (existingCategory == null)
+                {
+                    return Json(new { success = false, message = "Categoría no encontrada" });
+                }
+
+                existingCategory.Name = category.Name;
+                existingCategory.Description = category.Description;
+                existingCategory.IsActive = category.IsActive;
+
+                _context.Update(existingCategory);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Categoría actualizada exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory([FromBody] int id)
+        {
+            try
+            {
+                var category = await _context.Categories.FindAsync(id);
+                if (category == null)
+                {
+                    return Json(new { success = false, message = "Categoría no encontrada" });
+                }
+
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Categoría eliminada exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar: " + ex.Message });
+            }
         }
     }
 }

@@ -1,42 +1,150 @@
 ﻿@model StockMasterX.Models.Category
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles de Categoría";
 }
 
-<h1>Details</h1>
+<div class="row">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>🏷️ Detalles de Categoría</h1>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">✏️ Editar</a>
+                <a asp-action="Index" class="btn btn-secondary">⬅️ Volver</a>
+            </div>
+        </div>
 
-<div>
-    <h4>Category</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsActive)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsActive)
-        </dd>
-    </dl>
+        <div class="card shadow-lg">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">@Model.Name</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted mb-1">📝 Descripción</label>
+                            <p class="h5">@(Model.Description ?? "Sin descripción")</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted mb-1">📅 Fecha de Creación</label>
+                            <p class="h5">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted mb-1">✅ Estado</label>
+                            <p>
+                                @if (Model.IsActive)
+                                {
+                                    <span class="badge bg-success fs-5">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary fs-5">Inactivo</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted mb-1">📦 Total de Productos</label>
+                            <p class="h5">
+                                <span class="badge bg-info fs-5">@Model.Products.Count productos</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.Products.Any())
+                {
+                    <hr />
+                    <h4 class="mb-3">📦 Productos en esta Categoría</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Nombre</th>
+                                    <th class="text-end">Precio</th>
+                                    <th class="text-center">Stock</th>
+                                    <th class="text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var product in Model.Products.Take(10))
+                                {
+                                    <tr>
+                                        <td><strong>@product.SKU</strong></td>
+                                        <td>@product.Name</td>
+                                        <td class="text-end">₡@product.SalePrice.ToString("N0")</td>
+                                        <td class="text-center">
+                                            @if (product.CurrentStock <= product.MinimumStock)
+                                            {
+                                                <span class="badge bg-danger">@product.CurrentStock</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">@product.CurrentStock</span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            @if (product.IsActive)
+                                            {
+                                                <span class="badge bg-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Inactivo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (Model.Products.Count > 10)
+                    {
+                        <p class="text-muted text-center">Mostrando 10 de @Model.Products.Count productos</p>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle"></i> No hay productos asociados a esta categoría aún.
+                    </div>
+                }
+            </div>
+            <div class="card-footer bg-light">
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">✏️ Editar Categoría</a>
+                    <a asp-action="Index" class="btn btn-secondary">📋 Ver Todas las Categorías</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .info-item {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .info-item label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .card {
+        border: none;
+    }
+</style>

@@ -22,7 +22,10 @@ namespace StockMasterX.Controllers
         // GET: Suppliers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Suppliers.ToListAsync());
+            // ARREGLADO: Agregado .Include() para cargar productos
+            return View(await _context.Suppliers
+                .Include(s => s.Products)
+                .ToListAsync());
         }
 
         // GET: Suppliers/Details/5
@@ -34,6 +37,7 @@ namespace StockMasterX.Controllers
             }
 
             var supplier = await _context.Suppliers
+                .Include(s => s.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (supplier == null)
             {
@@ -50,8 +54,6 @@ namespace StockMasterX.Controllers
         }
 
         // POST: Suppliers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,ContactPerson,Email,Phone,Address,CreatedAt,IsActive")] Supplier supplier)
@@ -82,8 +84,6 @@ namespace StockMasterX.Controllers
         }
 
         // POST: Suppliers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ContactPerson,Email,Phone,Address,CreatedAt,IsActive")] Supplier supplier)
@@ -125,6 +125,7 @@ namespace StockMasterX.Controllers
             }
 
             var supplier = await _context.Suppliers
+                .Include(s => s.Products)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (supplier == null)
             {
@@ -147,6 +148,71 @@ namespace StockMasterX.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateSupplier([FromBody] Supplier supplier)
+        {
+            try
+            {
+                supplier.CreatedAt = DateTime.Now;
+                _context.Suppliers.Add(supplier);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Proveedor creado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateSupplier([FromBody] Supplier supplier)
+        {
+            try
+            {
+                var existingSupplier = await _context.Suppliers.FindAsync(supplier.Id);
+                if (existingSupplier == null)
+                {
+                    return Json(new { success = false, message = "Proveedor no encontrado" });
+                }
+
+                existingSupplier.Name = supplier.Name;
+                existingSupplier.ContactPerson = supplier.ContactPerson;
+                existingSupplier.Email = supplier.Email;
+                existingSupplier.Phone = supplier.Phone;
+                existingSupplier.Address = supplier.Address;
+                existingSupplier.IsActive = supplier.IsActive;
+
+                _context.Update(existingSupplier);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Proveedor actualizado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteSupplier([FromBody] int id)
+        {
+            try
+            {
+                var supplier = await _context.Suppliers.FindAsync(id);
+                if (supplier == null)
+                {
+                    return Json(new { success = false, message = "Proveedor no encontrado" });
+                }
+
+                _context.Suppliers.Remove(supplier);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Proveedor eliminado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar: " + ex.Message });
+            }
         }
 
         private bool SupplierExists(int id)

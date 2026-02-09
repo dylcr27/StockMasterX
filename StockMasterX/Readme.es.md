@@ -114,18 +114,6 @@ Este sistema es ideal para:
 - Startups que gestionan productos
 - Instituciones educativas
 
-## 📸 Capturas de Pantalla
-
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
-
-### Gestión de Productos
-![Productos](screenshots/products.png)
-
-### Movimientos de Inventario
-![Movimientos](screenshots/movements.png)
-
-*Nota: Agregar capturas de pantalla en la carpeta `screenshots` en la raíz*
 
 ## 🚦 Guía de Inicio Rápido
 
@@ -155,11 +143,6 @@ Este sistema es ideal para:
 
 ¡Las contribuciones son bienvenidas! Por favor, abre un issue primero para discutir los cambios que te gustaría hacer.
 
-1. Fork el proyecto
-2. Crea tu rama de feature (`git checkout -b feature/CaracteristicaAsombrosa`)
-3. Commit tus cambios (`git commit -m 'Agregar alguna CaracteristicaAsombrosa'`)
-4. Push a la rama (`git push origin feature/CaracteristicaAsombrosa`)
-5. Abre un Pull Request
 
 ## 📄 Licencia
 
@@ -167,17 +150,17 @@ Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más deta
 
 ## 👤 Autor
 
-**Dylan**
-- Analista de Software en INCAE Business School
+**Dylan Molina Obando**
+
 - Especializado en ASP.NET Core, SQL Server y Desarrollo Web
-- LinkedIn: [Tu Perfil]
+- LinkedIn: https://www.linkedin.com/in/dylan-molina-o/
 - Portafolio: [Tu Sitio Web]
-- GitHub: [@tuusuario](https://github.com/tuusuario)
+- GitHub: [@dylcr27]https://github.com/dylcr27
 
 ## 📞 Contacto y Soporte
 
 Para soporte o consultas:
-- Email: [tu.email@ejemplo.com]
+- Email: dylanmo2794@gmail.com
 - Abre un issue en este repositorio
 
 ## 🙏 Agradecimientos
@@ -191,3 +174,7 @@ Para soporte o consultas:
 ⭐ Si encuentras útil este proyecto, ¡por favor dale una estrella!
 
 Hecho con ❤️ en Costa Rica
+
+Desarrollado por Dylan Molina Obando
+
+LinkedIN: https://www.linkedin.com/in/dylan-molina-o/

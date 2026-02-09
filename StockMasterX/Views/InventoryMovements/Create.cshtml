@@ -1,57 +1,166 @@
 ﻿@model StockMasterX.Models.InventoryMovement
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Registrar Movimiento";
 }
 
-<h1>Create</h1>
-
-<h4>InventoryMovement</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ProductId" class="control-label"></label>
-                <select asp-for="ProductId" class ="form-control" asp-items="ViewBag.ProductId"></select>
+    <div class="col-md-8">
+        <h1>➕ Registrar Movimiento de Inventario</h1>
+        <hr />
+
+        <div class="card">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Producto *</label>
+                    <select id="productId" class="form-control">
+                        <option value="">-- Seleccione un producto --</option>
+                        @if (ViewBag.ProductId != null)
+                        {
+                            @foreach (var item in (SelectList)ViewBag.ProductId)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tipo de Movimiento *</label>
+                    <select id="type" class="form-control">
+                        <option value="">-- Seleccione el tipo --</option>
+                        <option value="0">📥 Entrada (Agregar stock)</option>
+                        <option value="1">📤 Salida (Retirar stock)</option>
+                        <option value="2">🔧 Ajuste (Corrección de inventario)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Cantidad *</label>
+                    <input type="number" id="quantity" class="form-control" min="1" value="1" />
+                    <small class="text-muted">Cantidad de unidades del movimiento</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Razón / Motivo *</label>
+                    <textarea id="reason" class="form-control" rows="3" placeholder="Ej: Compra a proveedor, Venta a cliente, Ajuste por inventario físico"></textarea>
+                    <small class="text-muted">Describa el motivo del movimiento</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Fecha del Movimiento</label>
+                    <input type="datetime-local" id="movementDate" class="form-control" />
+                    <small class="text-muted">Si no se especifica, se usará la fecha y hora actual</small>
+                </div>
+
+                <div>
+                    <button type="button" id="saveBtn" class="btn btn-success btn-lg">💾 Registrar Movimiento</button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">❌ Cancelar</a>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <select asp-for="Type" class="form-control"></select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Reason" class="control-label"></label>
-                <input asp-for="Reason" class="form-control" />
-                <span asp-validation-for="Reason" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MovementDate" class="control-label"></label>
-                <input asp-for="MovementDate" class="form-control" />
-                <span asp-validation-for="MovementDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <input asp-for="UserId" class="form-control" />
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<script>
+    // Establecer fecha y hora actual por defecto
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('movementDate').value = now.toISOString().slice(0, 16);
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', function() {
+        const data = {
+            productId: parseInt(document.getElementById('productId').value),
+            type: parseInt(document.getElementById('type').value),
+            quantity: parseInt(document.getElementById('quantity').value),
+            reason: document.getElementById('reason').value.trim(),
+            movementDate: document.getElementById('movementDate').value || new Date().toISOString()
+        };
+
+        // Validaciones
+        if (!data.productId || isNaN(data.productId)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campo requerido',
+                text: 'Por favor seleccione un producto'
+            });
+            return;
+        }
+
+        if (isNaN(data.type)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campo requerido',
+                text: 'Por favor seleccione el tipo de movimiento'
+            });
+            return;
+        }
+
+        if (!data.quantity || data.quantity < 1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Cantidad inválida',
+                text: 'La cantidad debe ser mayor a 0'
+            });
+            return;
+        }
+
+        if (!data.reason) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campo requerido',
+                text: 'Por favor ingrese la razón del movimiento'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Guardando...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        fetch('/InventoryMovements/CreateMovement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: result.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = '/InventoryMovements';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al registrar el movimiento'
+            });
+        });
+    });
+</script>

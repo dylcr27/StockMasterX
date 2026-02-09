@@ -4,93 +4,159 @@
     ViewData["Title"] = "Movimientos de Inventario";
 }
 
-<div class="row mb-3">
-    <div class="col-md-6">
-        <h1>📊 Movimientos de Inventario</h1>
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1>📊 Movimientos de Inventario</h1>
+        </div>
+        <div class="col-md-6 text-end">
+            <a asp-action="Create" class="btn btn-primary btn-lg">
+                ➕ REGISTRAR MOVIMIENTO
+            </a>
+        </div>
     </div>
-    <div class="col-md-6 text-end">
-        <a asp-action="Create" class="btn btn-primary btn-lg">
-            ➕ Registrar Movimiento
-        </a>
-    </div>
-</div>
 
-<div class="card shadow">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="table-warning">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Producto</th>
-                        <th class="text-center">Tipo</th>
-                        <th class="text-center">Cantidad</th>
-                        <th>Razón</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.OrderByDescending(m => m.MovementDate))
-                    {
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
                         <tr>
-                            <td>
-                                <strong>@item.MovementDate.ToString("dd/MM/yyyy")</strong>
-                                <br />
-                                <small class="text-muted">@item.MovementDate.ToString("HH:mm")</small>
-                            </td>
-                            <td>
-                                <strong>@item.Product.Name</strong>
-                                <br />
-                                <small class="text-muted">SKU: @item.Product.SKU</small>
-                            </td>
-                            <td class="text-center">
-                                @if (item.Type == StockMasterX.Models.MovementType.Entry)
-                                {
-                                    <span class="badge bg-success fs-6">
-                                        📥 Entrada
-                                    </span>
-                                }
-                                else if (item.Type == StockMasterX.Models.MovementType.Exit)
-                                {
-                                    <span class="badge bg-danger fs-6">
-                                        📤 Salida
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-warning text-dark fs-6">
-                                        🔧 Ajuste
-                                    </span>
-                                }
-                            </td>
-                            <td class="text-center">
-                                <h5 class="mb-0">
+                            <th>FECHA</th>
+                            <th>PRODUCTO</th>
+                            <th class="text-center">TIPO</th>
+                            <th class="text-center">CANTIDAD</th>
+                            <th>RAZÓN</th>
+                            <th class="text-center">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderByDescending(m => m.MovementDate))
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.MovementDate.ToString("dd/MM/yyyy")</strong>
+                                    <br />
+                                    <small class="text-muted">@item.MovementDate.ToString("HH:mm")</small>
+                                </td>
+                                <td>
+                                    <strong>@item.Product.Name</strong>
+                                    <br />
+                                    <small class="text-muted">SKU: @item.Product.SKU</small>
+                                </td>
+                                <td class="text-center">
                                     @if (item.Type == StockMasterX.Models.MovementType.Entry)
                                     {
-                                        <span class="text-success">+@item.Quantity</span>
+                                        <span class="badge bg-success">
+                                            📥 Entrada
+                                        </span>
                                     }
                                     else if (item.Type == StockMasterX.Models.MovementType.Exit)
                                     {
-                                        <span class="text-danger">-@item.Quantity</span>
+                                        <span class="badge bg-danger">
+                                            📤 Salida
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="text-warning">@item.Quantity</span>
+                                        <span class="badge bg-warning text-dark">
+                                            🔧 Ajuste
+                                        </span>
                                     }
-                                </h5>
-                            </td>
-                            <td>@item.Reason</td>
-                            <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">👁️</a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️</a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                </td>
+                                <td class="text-center">
+                                    <h5 class="mb-0">
+                                        @if (item.Type == StockMasterX.Models.MovementType.Entry)
+                                        {
+                                            <span class="text-success">+@item.Quantity</span>
+                                        }
+                                        else if (item.Type == StockMasterX.Models.MovementType.Exit)
+                                        {
+                                            <span class="text-danger">-@item.Quantity</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-warning">@item.Quantity</span>
+                                        }
+                                    </h5>
+                                </td>
+                                <td>@item.Reason</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="Ver detalles">👁️</a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Editar">✏️</a>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteMovement(@item.Id, '@item.Product.Name')" title="Eliminar">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function deleteMovement(id, productName) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            html: `¿Deseas eliminar este movimiento del producto <strong>${productName}</strong>?<br>Esta acción no se puede deshacer.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '🗑️ Sí, eliminar',
+            cancelButtonText: '❌ Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Eliminando...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch('/InventoryMovements/DeleteMovement', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(id)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Eliminado!',
+                            text: result.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al eliminar el movimiento'
+                    });
+                });
+            }
+        });
+    }
+</script>

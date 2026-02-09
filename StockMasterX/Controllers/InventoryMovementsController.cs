@@ -156,6 +156,73 @@ namespace StockMasterX.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMovement([FromBody] InventoryMovement movement)
+        {
+            try
+            {
+                _context.InventoryMovements.Add(movement);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Movimiento registrado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateMovement([FromBody] InventoryMovement movement)
+        {
+            try
+            {
+                var existingMovement = await _context.InventoryMovements.FindAsync(movement.Id);
+                if (existingMovement == null)
+                {
+                    return Json(new { success = false, message = "Movimiento no encontrado" });
+                }
+
+                existingMovement.ProductId = movement.ProductId;
+                existingMovement.Type = movement.Type;
+                existingMovement.Quantity = movement.Quantity;
+                existingMovement.Reason = movement.Reason;
+                existingMovement.MovementDate = movement.MovementDate;
+
+                _context.Update(existingMovement);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Movimiento actualizado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMovement([FromBody] int id)
+        {
+            try
+            {
+                var movement = await _context.InventoryMovements.FindAsync(id);
+                if (movement == null)
+                {
+                    return Json(new { success = false, message = "Movimiento no encontrado" });
+                }
+
+                _context.InventoryMovements.Remove(movement);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Movimiento eliminado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar: " + ex.Message });
+            }
+        }
+
+
+
         private bool InventoryMovementExists(int id)
         {
             return _context.InventoryMovements.Any(e => e.Id == id);

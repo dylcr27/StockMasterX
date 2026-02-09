@@ -2,42 +2,45 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
+<div class="container-fluid px-4 pt-3">
+    <!-- Header del Dashboard -->
+    <div class="row">
         <div class="col-12">
-            <h1 class="display-4">Dashboard de Inventario</h1>
-            <p class="lead">Resumen general del sistema</p>
+            <div class="dashboard-header text-center">
+                <h1>Dashboard</h1>
+                <p>Resumen general del sistema</p>
+            </div>
         </div>
     </div>
 
     <!-- Tarjetas de estadísticas -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card-primary">
                 <div class="card-body">
                     <h5 class="card-title">Total Productos</h5>
                     <h2 class="card-text">@(ViewBag.TotalProducts ?? 0)</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card-success">
                 <div class="card-body">
                     <h5 class="card-title">Categorías</h5>
                     <h2 class="card-text">@(ViewBag.TotalCategories ?? 0)</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card-info">
                 <div class="card-body">
                     <h5 class="card-title">Proveedores</h5>
                     <h2 class="card-text">@(ViewBag.TotalSuppliers ?? 0)</h2>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stats-card card-danger">
                 <div class="card-body">
                     <h5 class="card-title">Stock Bajo</h5>
                     <h2 class="card-text">@(ViewBag.LowStockProducts?.Count ?? 0)</h2>
@@ -48,30 +51,49 @@
 
     <div class="row">
         <!-- Productos con stock bajo -->
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-warning">
-                    <h5 class="mb-0">⚠️ Productos con Stock Bajo</h5>
+        <div class="col-lg-6 mb-4">
+            <div class="content-card">
+                <div class="card-header header-warning">
+                    Productos con Stock Bajo
                 </div>
                 <div class="card-body">
                     @if (ViewBag.LowStockProducts != null && ((List<StockMasterX.Models.Product>)ViewBag.LowStockProducts).Count > 0)
                     {
                         <div class="table-responsive">
-                            <table class="table table-sm">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Producto</th>
                                         <th class="text-center">Stock Actual</th>
                                         <th class="text-center">Stock Mínimo</th>
+                                        <th class="text-center">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var product in (List<StockMasterX.Models.Product>)ViewBag.LowStockProducts)
                                     {
                                         <tr>
-                                            <td>@product.Name</td>
-                                            <td class="text-center"><span class="badge bg-danger">@product.CurrentStock</span></td>
-                                            <td class="text-center">@product.MinimumStock</td>
+                                            <td><strong>@product.Name</strong></td>
+                                            <td class="text-center">
+                                                <span class="badge bg-danger">@product.CurrentStock</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-warning">@product.MinimumStock</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (product.CurrentStock == 0)
+                                                {
+                                                    <span class="badge bg-danger">Agotado</span>
+                                                }
+                                                else if (product.CurrentStock < product.MinimumStock / 2)
+                                                {
+                                                    <span class="badge bg-danger">Crítico</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Bajo</span>
+                                                }
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
@@ -80,55 +102,70 @@
                     }
                     else
                     {
-                        <p class="text-muted text-center mb-0">No hay productos con stock bajo 🎉</p>
+                        <div class="alert alert-success text-center mb-0">
+                            <strong>✅ ¡Todo en orden!</strong><br>
+                            No hay productos con stock bajo
+                        </div>
                     }
                     <div class="text-center mt-3">
-                        <a asp-controller="Products" asp-action="Index" class="btn btn-warning">Ver todos los productos</a>
+                        <a asp-controller="Products" asp-action="Index" class="btn btn-warning">
+                            Ver todos los productos →
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Movimientos recientes -->
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">📦 Movimientos Recientes</h5>
+        <div class="col-lg-6 mb-4">
+            <div class="content-card">
+                <div class="card-header header-info">
+                    Movimientos Recientes
                 </div>
                 <div class="card-body">
                     @if (ViewBag.RecentMovements != null && ((List<StockMasterX.Models.InventoryMovement>)ViewBag.RecentMovements).Count > 0)
                     {
                         <div class="table-responsive">
-                            <table class="table table-sm">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Producto</th>
                                         <th class="text-center">Tipo</th>
                                         <th class="text-center">Cantidad</th>
-                                        <th>Fecha</th>
+                                        <th class="text-center">Fecha</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var movement in (List<StockMasterX.Models.InventoryMovement>)ViewBag.RecentMovements)
                                     {
                                         <tr>
-                                            <td>@movement.Product.Name</td>
+                                            <td><strong>@movement.Product.Name</strong></td>
                                             <td class="text-center">
                                                 @if (movement.Type == StockMasterX.Models.MovementType.Entry)
                                                 {
-                                                    <span class="badge bg-success">Entrada</span>
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-arrow-down-circle"></i> Entrada
+                                                    </span>
                                                 }
                                                 else if (movement.Type == StockMasterX.Models.MovementType.Exit)
                                                 {
-                                                    <span class="badge bg-danger">Salida</span>
+                                                    <span class="badge bg-danger">
+                                                        <i class="bi bi-arrow-up-circle"></i> Salida
+                                                    </span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="badge bg-warning text-dark">Ajuste</span>
+                                                    <span class="badge bg-warning text-dark">
+                                                        <i class="bi bi-arrow-left-right"></i> Ajuste
+                                                    </span>
                                                 }
                                             </td>
-                                            <td class="text-center">@movement.Quantity</td>
-                                            <td>@movement.MovementDate.ToString("dd/MM/yyyy")</td>
+                                            <td class="text-center">
+                                                <strong>@movement.Quantity</strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <small class="text-muted">@movement.MovementDate.ToString("dd/MM/yyyy")</small>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
@@ -137,10 +174,50 @@
                     }
                     else
                     {
-                        <p class="text-muted text-center mb-0">No hay movimientos registrados</p>
+                        <div class="alert alert-info text-center mb-0">
+                            <strong>ℹ️ Sin movimientos</strong><br>
+                            No hay movimientos registrados aún
+                        </div>
                     }
                     <div class="text-center mt-3">
-                        <a asp-controller="InventoryMovements" asp-action="Index" class="btn btn-info">Ver todos los movimientos</a>
+                        <a asp-controller="InventoryMovements" asp-action="Index" class="btn btn-info">
+                            Ver todos los movimientos →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección adicional: Accesos rápidos -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="content-card">
+                <div class="card-header header-info">
+                    Accesos Rápidos
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Products" asp-action="Create" class="btn btn-primary w-100">
+                                Nuevo Producto
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Categories" asp-action="Create" class="btn btn-success w-100">
+                                Nueva Categoría
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="Suppliers" asp-action="Create" class="btn btn-info w-100">
+                                Nuevo Proveedor
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-controller="InventoryMovements" asp-action="Create" class="btn btn-warning w-100">
+                                Registrar Movimiento
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

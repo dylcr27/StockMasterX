@@ -38,7 +38,9 @@ namespace StockMasterX.Controllers
 
             var supplier = await _context.Suppliers
                 .Include(s => s.Products)
+                    .ThenInclude(p => p.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (supplier == null)
             {
                 return NotFound();

@@ -461,7 +461,7 @@ body {
 /* Espaciado para el contenido principal */
 main {
     min-height: calc(100vh - 200px);
-    padding-bottom: 6rem !important;
+    padding-bottom: 8rem !important;
 }
 
 /* ============================================
@@ -510,7 +510,8 @@ h1 {
 /* Contenedores de páginas */
 .container-fluid.px-4 {
     padding-top: 1rem;
-    padding-bottom: 5rem !important;
+    padding-bottom: 8rem !important;
+    min-height: 80vh;
 }
 
 /* ============================================
